@@ -35,11 +35,14 @@ GitHubリポジトリの設定から、以下のシークレットを設定し�
 3. 左側のメニューから「Secrets and variables」→「Codespaces」を選択
 4. 「New repository secret」ボタンをクリックして以下の情報を追加：
 
-| シークレット名 | 説明 | 例 |
-|------------|------|-----|
-| `AWS_ACCOUNT_ID` | AWSアカウントID（12桁の数字） | `123456789012` |
-| `AWS_REGION` | デプロイ先のAWSリージョン | `ap-northeast-1` |
-| `CONTAINER_IMAGE` | デプロイするコンテナイメージ（GitHub Container Registry） | `ghcr.io/yourorg/webapp:latest` |
+| シークレット名          | 説明                                                      | 例                                         |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------ |
+| `AWS_ACCOUNT_ID`        | AWSアカウントID（12桁の数字）                             | `123456789012`                             |
+| `AWS_REGION`            | デプロイ先のAWSリージョン                                 | `ap-northeast-1`                           |
+| `CONTAINER_IMAGE`       | デプロイするコンテナイメージ（GitHub Container Registry） | `ghcr.io/yourorg/webapp:latest`            |
+| `MFA_DEVICE_ARN`        | MFAデバイスのARN                                          | `arn:aws:iam::123456789012:mfa/username`   |
+| `AWS_ACCESS_KEY_ID`     | IAMユーザーのアクセスキーID                               | `AKIAIOSFODNN7EXAMPLE`                     |
+| `AWS_SECRET_ACCESS_KEY` | IAMユーザーのシークレットアクセスキー                     | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
 
 その他のパラメータはデフォルト値を使用するか、環境に合わせて`.env`ファイルでカスタマイズできます。
 
@@ -61,6 +64,9 @@ code .env
 AWS_ACCOUNT_ID=123456789012
 AWS_REGION=ap-northeast-1
 CONTAINER_IMAGE=ghcr.io/yourorg/webapp:latest
+MFA_DEVICE_ARN=arn:aws:iam::123456789012:mfa/username
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
 必要に応じて他の設定もカスタマイズできます：
@@ -131,6 +137,27 @@ CDKスタックの内容は`lib/webapp-stack.ts`ファイルで定義されて�
 - IAMユーザーにMFAが有効化されていることを確認
 - `CdkDeployer`ロールが作成されていることを確認
 - IAMユーザーが`CdkDeployer`ロールを引き受ける権限を持っていることを確認
+- IAMユーザーの認証情報（アクセスキーIDとシークレットアクセスキー）が正しく設定されていることを確認
+  - GitHub Codespaces環境変数またはリポジトリのSecretsに`AWS_ACCESS_KEY_ID`と`AWS_SECRET_ACCESS_KEY`を設定
+  - または、ローカルの`.env`ファイルに設定
+
+以下のようなエラーが表示される場合は、IAMユーザーの認証情報が正しく設定されていない可能性があります：
+
+```
+An error occurred (InvalidClientTokenId) when calling the AssumeRole operation: The security token included in the request is invalid.
+```
+
+この場合、以下の手順を試してください：
+
+1. AWSコンソールから新しいIAMアクセスキーを作成
+2. 環境変数または`.env`ファイルに新しいアクセスキーを設定
+3. 以下のコマンドでAWS CLIが正しく設定されていることを確認:
+
+```bash
+aws sts get-caller-identity
+```
+
+このコマンドが正常に実行され、IAMユーザー情報が表示されれば、認証情報は正しく設定されています。
 
 ### デプロイの失敗
 

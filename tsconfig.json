@@ -18,7 +18,7 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"],
-    "outDir": "./lib",
+    "outDir": "./dist",
     "rootDir": "./",
     "resolveJsonModule": true,
     "esModuleInterop": true

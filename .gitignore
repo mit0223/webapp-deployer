@@ -9,10 +9,7 @@ cdk.out
 node_modules
 
 # Compiled files
-/lib
-*.js
-!jest.config.js
-*.d.ts
+/dist
 
 # Testing
 coverage

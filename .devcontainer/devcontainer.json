@@ -30,13 +30,12 @@
       "settings": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
+          "source.fixAll.eslint": "always"
         },
         "terminal.integrated.defaultProfile.linux": "bash",
         "aws.telemetry": false
       }
     }
   },
-  "forwardPorts": [],
-  "remoteUser": "node"
+  "forwardPorts": []
 }
